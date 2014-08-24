@@ -15,9 +15,13 @@ int main(){
     r.setFillColor(sf::Color::Red);
     
     float ground = window.getSize().y*6/7;
+    float deltatime = 0;
+    sf::Clock timer;
 
     //GAME LOOP
     while(window.isOpen()){
+        
+        deltatime = timer.restart();
         
         sf::Event event;
         while(window.pollEvent(event)) if (event.type == sf::Event::Closed) window.close(); 
@@ -27,7 +31,7 @@ int main(){
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))  v.x = 0;
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) v.x = 1;
         
-        r.move(v);
+        r.move(v * deltatime);
         
         if( (r.getPosition().y + r.getSize().y) < ground || v.y < 0){
             v.y += g;
