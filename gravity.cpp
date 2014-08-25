@@ -24,12 +24,12 @@ sf::Color getColisionColor(float posx, float posy, sf::Image& img, sf::Sprite& b
 
 
 int main(){
-
-    const float g = 50;
     
     sf::Vector2f v = sf::Vector2f(0,0);
     sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Gravity");
-    
+   
+    const float g = (int)window.getSize().y*2 ;
+
     sf::RectangleShape r(sf::Vector2f(window.getSize().x/10, window.getSize().y/10));
     r.setPosition(0,0); r.setFillColor(sf::Color::White);
     
@@ -83,7 +83,7 @@ int main(){
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::R)) { reboot = true; v.x = 0; }
         r.move(v * deltatime);
         
-        if( (r.getPosition().y + r.getSize().y) < ground || v.y < 0) v.y += g;
+        if( (r.getPosition().y + r.getSize().y) < ground || v.y < 0) v.y += g *deltatime;
         else {
             r.setPosition(r.getPosition().x, ground - r.getSize().y);
             v.y = 0;
