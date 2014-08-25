@@ -125,7 +125,7 @@ int main(){
 					if(num > max) max = num; if(num < min) min = num;
 				}
 			}
-			if(max - min <= 2) text.setString("YouWonTheGame!");
+			if(max - min <= 3) text.setString("YouWonTheGame!");
         window.clear();
 		window.draw(bSprite);
 		window.draw(text);
