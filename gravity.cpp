@@ -47,7 +47,8 @@ int main(){
 	sf::Sprite bSprite;
 	
 	std::map<sf::Color, sf::Time> colorsColiding;
-	
+
+	bool reboot = false;
 	bool needshiet = true;
 	int pantalla = 0;
 	
@@ -67,18 +68,19 @@ int main(){
 							window.getSize().y/bSprite.getGlobalBounds().height);
 			
 			needshiet = false;
+			deltatime = 0;
 		}
 		
         deltatime = timer.restart().asSeconds();
         
         sf::Event event;
         while(window.pollEvent(event)) if (event.type == sf::Event::Closed) window.close(); 
-        
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))  v.y = (int)window.getSize().y/2 * -1;
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) v.x = (int)window.getSize().x/20 * -1;
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))  v.x = 0;
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) v.x = window.getSize().x/20;
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space))  v.y = (int)window.getSize().y * -1;
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::R)) { reboot = true; v.x = 0; }
         r.move(v * deltatime);
         
         if( (r.getPosition().y + r.getSize().y) < ground || v.y < 0) v.y += g;
@@ -118,25 +120,28 @@ int main(){
 		
 		int max = 0;
 		int min = 99999999;
-		if(colorsColiding[sf::Color::White] != sf::seconds(0.0)){
+		if(colorsColiding[sf::Color::White] != sf::seconds(0.0) || reboot){
 			for (std::map<sf::Color, sf::Time>::iterator it=colorsColiding.begin(); it!=colorsColiding.end(); ++it){
 				int num = (int)(it->second).asSeconds();
 				if(num > 0) {
 					if(num > max) max = num; if(num < min) min = num;
 				}
 			}
-			if(max - min <= 3) text.setString("YouWonTheGame!");
-        window.clear();
-		window.draw(bSprite);
-		window.draw(text);
-        window.draw(r);
-        window.display();
-			sf::Clock c; float t = 0;
-			while(t < 3){
-				t += c.restart().asSeconds();
+			if(max - min <= 3 || reboot) {
+				if(!reboot)text.setString("YouWonTheGame!");
+				window.clear();
+				window.draw(bSprite);
+				window.draw(text);
+				window.draw(r);
+				window.display();
+				sf::Clock c; float t = 0;
+				while(t < 3){
+					t += c.restart().asSeconds();
+				}
+				if(!reboot) ++pantalla;
+				needshiet = true;
+				reboot = false;
 			}
-			++pantalla;
-			needshiet = true;
 		}
 		
         window.clear();
@@ -146,7 +151,3 @@ int main(){
         window.display();
     }
 }
-
-/*
-
- */
