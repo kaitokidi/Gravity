@@ -45,17 +45,29 @@ int main(){
 	sf::Image bimg;
 	sf::Texture bTex;
 	sf::Sprite bSprite;
-	if(!bimg.loadFromFile("board0.png")) std::cout << "I CAN'T LOAD BOARD IMAGE" << std::endl;
-	if(!bTex.loadFromFile("board0.png")) std::cout << "I CAN'T LOAD BOARD texture" << std::endl;
-	bSprite.setTexture(bTex, true);
-	bSprite.scale(window.getSize().x/bSprite.getGlobalBounds().width , 
-					 window.getSize().y/bSprite.getGlobalBounds().height);
 	
 	std::map<sf::Color, sf::Time> colorsColiding;
 	
+	bool needshiet = true;
+	int pantalla = 0;
+	
     //GAME LOOP
     while(window.isOpen()){
-    
+		if(needshiet){
+			sf::Vector2f v = sf::Vector2f(0,0);
+			colorsColiding.clear();
+			r.setPosition(0,0);
+			std::stringstream s;
+			s << "board" << pantalla;		
+			std::string board = s.str();
+			if(!bimg.loadFromFile(board+".png")) std::cout << "I CAN'T LOAD BOARD IMAGE" << std::endl;
+			if(!bTex.loadFromFile(board+".png")) std::cout << "I CAN'T LOAD BOARD texture" << std::endl;
+			bSprite.setTexture(bTex, true);
+			bSprite.scale(window.getSize().x/bSprite.getGlobalBounds().width , 
+							window.getSize().y/bSprite.getGlobalBounds().height);
+			
+			needshiet = false;
+		}
 		
         deltatime = timer.restart().asSeconds();
         
@@ -113,7 +125,18 @@ int main(){
 					if(num > max) max = num; if(num < min) min = num;
 				}
 			}
-			if(max - min <= 5) text.setString("YouWonTheGame!");
+			if(max - min <= 2) text.setString("YouWonTheGame!");
+        window.clear();
+		window.draw(bSprite);
+		window.draw(text);
+        window.draw(r);
+        window.display();
+			sf::Clock c; float t = 0;
+			while(t < 3){
+				t += c.restart().asSeconds();
+			}
+			++pantalla;
+			needshiet = true;
 		}
 		
         window.clear();
