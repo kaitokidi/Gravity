@@ -48,14 +48,14 @@ int main(){
 	
 	std::map<sf::Color, sf::Time> colorsColiding;
 
+	int pantalla = 0;
 	bool reboot = false;
 	bool needshiet = true;
-	int pantalla = 0;
 	
     //GAME LOOP
     while(window.isOpen()){
 		if(needshiet){
-			sf::Vector2f v = sf::Vector2f(0,0);
+			v = sf::Vector2f(0,0);
 			colorsColiding.clear();
 			r.setPosition(0,0);
 			std::stringstream s;
@@ -127,8 +127,10 @@ int main(){
 					if(num > max) max = num; if(num < min) min = num;
 				}
 			}
+			//if(! max - min <= 3) reboot = true;
 			if(max - min <= 3 || reboot) {
 				if(!reboot)text.setString("YouWonTheGame!");
+				else text.setString(" Nice try!");
 				window.clear();
 				window.draw(bSprite);
 				window.draw(text);
@@ -137,11 +139,13 @@ int main(){
 				sf::Clock c; float t = 0;
 				while(t < 3){
 					t += c.restart().asSeconds();
+					timer.restart();
 				}
 				if(!reboot) ++pantalla;
 				needshiet = true;
 				reboot = false;
 			}
+			else reboot = true;
 		}
 		
         window.clear();
