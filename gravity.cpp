@@ -7,21 +7,16 @@
 #include <SFML/Graphics.hpp>
 namespace sf{
 	bool operator< (const sf::Color& c1, const sf::Color& c2){
-		if(c1.r < c2.r) return true;
-		else if(c1.r > c2.r) return false;
-		else if(c1.g < c2.g) return true;
-		else if(c1.g > c2.g) return false;
-		else if(c1.b < c2.b) return true;
-		else if(c1.b > c2.b) return false;
-		else if(c1.a < c2.a) return true;
-		else if(c1.a > c2.a) return false;
+		if(c1.r < c2.r) return true; else if(c1.r > c2.r) return false;
+		else if(c1.g < c2.g) return true; else if(c1.g > c2.g) return false;
+		else if(c1.b < c2.b) return true; else if(c1.b > c2.b) return false;
+		else if(c1.a < c2.a) return true; else if(c1.a > c2.a) return false;
 		else return false;
 	}
 }
 sf::Color getColisionColor(float posx, float posy, sf::Image& img, sf::Sprite& bSprite){
 	return img.getPixel( posx/bSprite.getScale().x, posy/bSprite.getScale().y);
 }
-
 
 int main(){
     
@@ -33,10 +28,9 @@ int main(){
     sf::RectangleShape r(sf::Vector2f(window.getSize().x/10, window.getSize().y/10));
     r.setPosition(0,0); r.setFillColor(sf::Color::White);
     
-	float ground = window.getSize().y-2;
-//     float ground = window.getSize().y*6/7;
     sf::Clock timer;
     float deltatime = 0;
+	float ground = window.getSize().y-2; //  float ground = window.getSize().y*6/7;
 	
 	sf::Text text; sf::Font font; 
 	if(! font.loadFromFile("font.ttf")) std::cout << "penguin" << std::endl;
@@ -66,7 +60,6 @@ int main(){
 			bSprite.setTexture(bTex, true);
 			bSprite.scale(window.getSize().x/bSprite.getGlobalBounds().width , 
 							window.getSize().y/bSprite.getGlobalBounds().height);
-			
 			needshiet = false;
 			deltatime = 0;
 		}
@@ -75,23 +68,29 @@ int main(){
         
         sf::Event event;
         while(window.pollEvent(event)) if (event.type == sf::Event::Closed) window.close(); 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))  v.y = (int)window.getSize().y/2 * -1;
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) v.x = (int)window.getSize().x/20 * -1;
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))  v.x = 0;
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) v.x = window.getSize().x/20;
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space))  v.y = (int)window.getSize().y * -1;
+		if(r.getPosition().y > 0){
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up   ))  v.y = (int)window.getSize().y/2 * -1;
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space))  v.y = (int)window.getSize().y * -1;
+		}
+//         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down ))  v.x = 0;
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left ))  v.x = (int)window.getSize().x/20 * -1;
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))  v.x = window.getSize().x/20;
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::R)) { reboot = true; v.x = 0; }
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) window.close();
         r.move(v * deltatime);
         
+		if(r.getPosition().y < 0) {v.y += g*deltatime;}
         if( (r.getPosition().y + r.getSize().y) < ground || v.y < 0) v.y += g *deltatime;
         else {
             r.setPosition(r.getPosition().x, ground - r.getSize().y);
             v.y = 0;
         }
         
+        if(r.getPosition().x + r.getSize().x > window.getSize().x) r.setPosition(window.getSize().x-1-r.getSize().x, r.getPosition().y);
+        
         sf::FloatRect fr = r.getGlobalBounds();
 
-		if(r.getPosition().y >= 0) {
+		if(r.getPosition().y >= 0 && r.getPosition().x+r.getSize().x < window.getSize().x && r.getPosition().x > 0) {
 			sf::Color color = getColisionColor(r.getPosition().x, r.getPosition().y, bimg, bSprite);
 			if(color != sf::Color::Black) colorsColiding[color]  += sf::seconds(deltatime);
 			sf::Color color2 = getColisionColor(r.getPosition().x + fr.width, r.getPosition().y, bimg, bSprite);
@@ -119,16 +118,18 @@ int main(){
 		text.setString(str);
 		
 		int max = 0;
+		int qtty = 0;
 		int min = 99999999;
 		if(colorsColiding[sf::Color::White] != sf::seconds(0.0) || reboot){
 			for (std::map<sf::Color, sf::Time>::iterator it=colorsColiding.begin(); it!=colorsColiding.end(); ++it){
 				int num = (int)(it->second).asSeconds();
 				if(num > 0) {
 					if(num > max) max = num; if(num < min) min = num;
+					++qtty;
 				}
 			}
 			//if(! max - min <= 3) reboot = true;
-			if(max - min <= 3 || reboot) {
+			if((max - min <= 3 && qtty >= 3) || reboot) {
 				if(!reboot)text.setString("YouWonTheGame!");
 				else text.setString(" Nice try!");
 				window.clear();
