@@ -130,7 +130,8 @@ int main(){
 			}
 			//if(! max - min <= 3) reboot = true;
 			if((max - min <= 3 && qtty >= 3) || reboot) {
-				if(!reboot)text.setString("YouWonTheGame!");
+				char *intStr = itoa(max); string str = string(intStr); // string(itoa(max)) (?)
+				if(!reboot)text.setString("YouWonTheGame!   punctuation = " + str);
 				else text.setString(" Nice try!");
 				window.clear();
 				window.draw(bSprite);
