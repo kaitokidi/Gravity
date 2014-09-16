@@ -130,8 +130,10 @@ int main(){
 			}
 			//if(! max - min <= 3) reboot = true;
 			if((max - min <= 3 && qtty >= 3) || reboot) {
-				char *intStr = itoa(max); string str = string(intStr); // string(itoa(max)) (?)
-				if(!reboot)text.setString("YouWonTheGame!   punctuation = " + str);
+				std::ostringstream oss;
+				oss << max;
+				std::string strn = oss.str();
+				if(!reboot)text.setString("YouWonTheGame!   punctuation = " + strn);
 				else text.setString(" Nice try!");
 				window.clear();
 				window.draw(bSprite);
