@@ -88,6 +88,12 @@ int main(){
         
         if(r.getPosition().x + r.getSize().x > window.getSize().x) r.setPosition(window.getSize().x-1-r.getSize().x, r.getPosition().y);
         
+/**/   	sf::VertexArray pj(sf::Quad, 4);
+/**/	pj[0].position = r.getPoint(0);
+/**/	pj[1].position = r.getPoint(1);
+/**/	pj[2].position = r.getPoint(2);
+/**/	pj[3].position = r.getPoint(3);
+
         sf::FloatRect fr = r.getGlobalBounds();
 
 		if(r.getPosition().y >= 0 && r.getPosition().x+r.getSize().x < window.getSize().x && r.getPosition().x > 0) {
@@ -99,6 +105,7 @@ int main(){
 			if(color3 != sf::Color::Black) colorsColiding[color3] += sf::seconds(deltatime);
 			sf::Color color4 = getColisionColor(r.getPosition().x + fr.width, r.getPosition().y + fr.height, bimg, bSprite);
 			if(color4 != sf::Color::Black) colorsColiding[color4] += sf::seconds(deltatime);
+/**/			pj[0].color = color; pj[1].color = color2; pj[2].color = color3; pj[3].color = color4;   
 		}
 		
 		std::stringstream ss;
@@ -151,9 +158,10 @@ int main(){
 			}
 			else reboot = true;
 		}
-		
+
         window.clear();
 		window.draw(bSprite);
+/**/	window.draw(pj);
 		window.draw(text);
         window.draw(r);
         window.display();
