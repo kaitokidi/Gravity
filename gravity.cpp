@@ -5,6 +5,7 @@
 #include <iostream>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+
 namespace sf{
 	bool operator< (const sf::Color& c1, const sf::Color& c2){
 		if(c1.r < c2.r) return true; else if(c1.r > c2.r) return false;
@@ -30,7 +31,7 @@ int main(){
     
     sf::Clock timer;
     float deltatime = 0;
-	float ground = window.getSize().y-2; //  float ground = window.getSize().y*6/7;
+	float ground = window.getSize().y-4; //  float ground = window.getSize().y*6/7;
 	
 	sf::Text text; sf::Font font; 
 	if(! font.loadFromFile("font.ttf")) std::cout << "penguin" << std::endl;
@@ -42,7 +43,7 @@ int main(){
 	
 	std::map<sf::Color, sf::Time> colorsColiding;
 
-	int pantalla = 0;
+	int pantalla = 3;
 	bool reboot = false;
 	bool needshiet = true;
 	
@@ -85,18 +86,24 @@ int main(){
             r.setPosition(r.getPosition().x, ground - r.getSize().y);
             v.y = 0;
         }
+        r.setOutlineColor(sf::Color::White);
+		r.setOutlineThickness(1);
         
-        if(r.getPosition().x + r.getSize().x > window.getSize().x) r.setPosition(window.getSize().x-1-r.getSize().x, r.getPosition().y);
+		if(r.getPosition().x < 1) r.setPosition(1, r.getPosition().y);
+        if(r.getPosition().x + r.getSize().x+3 > window.getSize().x) r.setPosition(window.getSize().x-r.getSize().x-3, r.getPosition().y);
         
-/**/   	sf::VertexArray pj(sf::Quad, 4);
-/**/	pj[0].position = r.getPoint(0);
-/**/	pj[1].position = r.getPoint(1);
-/**/	pj[2].position = r.getPoint(2);
-/**/	pj[3].position = r.getPoint(3);
-
+/**/   	sf::VertexArray pj(sf::Quads, 4);
         sf::FloatRect fr = r.getGlobalBounds();
+// /**/	pj[0].position = r.getPoint(0);
+// /**/	pj[1].position = r.getPoint(1);
+// /**/	pj[2].position = r.getPoint(2);
+// /**/	pj[3].position = r.getPoint(3);
+/**/	pj[0].position = sf::Vector2<float>(r.getPosition().x, r.getPosition().y);
+/**/	pj[1].position = sf::Vector2<float>(r.getPosition().x + fr.width-2, r.getPosition().y);
+/**/	pj[3].position = sf::Vector2<float>(r.getPosition().x, r.getPosition().y + fr.height-2);
+/**/	pj[2].position = sf::Vector2<float>(r.getPosition().x + fr.width-2, r.getPosition().y + fr.height-2);
 
-		if(r.getPosition().y >= 0 && r.getPosition().x+r.getSize().x < window.getSize().x && r.getPosition().x > 0) {
+		if(r.getPosition().y >= 0 && r.getPosition().x+r.getSize().x < window.getSize().x-1 && r.getPosition().x > 1 && r.getPosition().y+r.getSize().y < window.getSize().y) {
 			sf::Color color = getColisionColor(r.getPosition().x, r.getPosition().y, bimg, bSprite);
 			if(color != sf::Color::Black) colorsColiding[color]  += sf::seconds(deltatime);
 			sf::Color color2 = getColisionColor(r.getPosition().x + fr.width, r.getPosition().y, bimg, bSprite);
@@ -105,7 +112,7 @@ int main(){
 			if(color3 != sf::Color::Black) colorsColiding[color3] += sf::seconds(deltatime);
 			sf::Color color4 = getColisionColor(r.getPosition().x + fr.width, r.getPosition().y + fr.height, bimg, bSprite);
 			if(color4 != sf::Color::Black) colorsColiding[color4] += sf::seconds(deltatime);
-/**/			pj[0].color = color; pj[1].color = color2; pj[2].color = color3; pj[3].color = color4;   
+/**/			pj[0].color = color; pj[1].color = color2; pj[3].color = color3; pj[2].color = color4;   
 		}
 		
 		std::stringstream ss;
@@ -114,7 +121,7 @@ int main(){
 			sf::Color aux = (it->first);
 			if(aux.r >= aux.g and aux.r >= aux.b) {
 				if(aux.g < 100) col = "Red:";
-				else col = "Yellow";
+				else col = "Yellow:";
 			}
 			else if(aux.g >= aux.r and aux.g >= aux.b) col = "Green:";
 			else if(aux.b >= aux.g and aux.b >= aux.r) col = "Blue:";
@@ -161,9 +168,9 @@ int main(){
 
         window.clear();
 		window.draw(bSprite);
-/**/	window.draw(pj);
 		window.draw(text);
         window.draw(r);
+/**/	window.draw(pj, sf::BlendAlpha);
         window.display();
     }
 }
