@@ -105,12 +105,12 @@ int main(){
 		for (std::map<sf::Color, sf::Time>::iterator it=colorsColiding.begin(); it!=colorsColiding.end(); ++it){
 			std::string col = "wat:";
 			sf::Color aux = (it->first);
-			if(aux.r > aux.g and aux.r > aux.b) {
+			if(aux.r >= aux.g and aux.r >= aux.b) {
 				if(aux.g < 100) col = "Red:";
 				else col = "Yellow";
 			}
-			else if(aux.g > aux.r and aux.g > aux.b) col = "Green:";
-			else if(aux.b > aux.g and aux.b > aux.r) col = "Blue:";
+			else if(aux.g >= aux.r and aux.g >= aux.b) col = "Green:";
+			else if(aux.b >= aux.g and aux.b >= aux.r) col = "Blue:";
 			if((int)(it->second).asSeconds() > 0) 
 				ss << "   " << col << " " << (int)(it->second).asSeconds();		
 		}
