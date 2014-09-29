@@ -73,11 +73,10 @@ int main(){
 			if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up   ))  v.y = (int)window.getSize().y/2 * -1;
 			if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space))  v.y = (int)window.getSize().y * -1;
 		}
-//         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down ))  v.x = 0;
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left ))  v.x = (int)window.getSize().x/20 * -1;
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))  v.x = window.getSize().x/20;
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::R)) { reboot = true; v.x = 0; }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) window.close();
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) window.close();
         r.move(v * deltatime);
         
 		if(r.getPosition().y < 0) {v.y += g*deltatime;}
@@ -92,16 +91,12 @@ int main(){
 		if(r.getPosition().x < 1) r.setPosition(1, r.getPosition().y);
         if(r.getPosition().x + r.getSize().x+3 > window.getSize().x) r.setPosition(window.getSize().x-r.getSize().x-3, r.getPosition().y);
         
-/**/   	sf::VertexArray pj(sf::Quads, 4);
+   	sf::VertexArray pj(sf::Quads, 4);
         sf::FloatRect fr = r.getGlobalBounds();
-// /**/	pj[0].position = r.getPoint(0);
-// /**/	pj[1].position = r.getPoint(1);
-// /**/	pj[2].position = r.getPoint(2);
-// /**/	pj[3].position = r.getPoint(3);
-/**/	pj[0].position = sf::Vector2<float>(r.getPosition().x, r.getPosition().y);
-/**/	pj[1].position = sf::Vector2<float>(r.getPosition().x + fr.width-2, r.getPosition().y);
-/**/	pj[3].position = sf::Vector2<float>(r.getPosition().x, r.getPosition().y + fr.height-2);
-/**/	pj[2].position = sf::Vector2<float>(r.getPosition().x + fr.width-2, r.getPosition().y + fr.height-2);
+	pj[0].position = sf::Vector2<float>(r.getPosition().x, r.getPosition().y);
+	pj[1].position = sf::Vector2<float>(r.getPosition().x + fr.width-2, r.getPosition().y);
+	pj[3].position = sf::Vector2<float>(r.getPosition().x, r.getPosition().y + fr.height-2);
+	pj[2].position = sf::Vector2<float>(r.getPosition().x + fr.width-2, r.getPosition().y + fr.height-2);
 
 		if(r.getPosition().y >= 0 && r.getPosition().x+r.getSize().x < window.getSize().x-1 && r.getPosition().x > 1 && r.getPosition().y+r.getSize().y < window.getSize().y) {
 			sf::Color color = getColisionColor(r.getPosition().x, r.getPosition().y, bimg, bSprite);
@@ -112,7 +107,7 @@ int main(){
 			if(color3 != sf::Color::Black) colorsColiding[color3] += sf::seconds(deltatime);
 			sf::Color color4 = getColisionColor(r.getPosition().x + fr.width, r.getPosition().y + fr.height, bimg, bSprite);
 			if(color4 != sf::Color::Black) colorsColiding[color4] += sf::seconds(deltatime);
-/**/			pj[0].color = color; pj[1].color = color2; pj[3].color = color3; pj[2].color = color4;   
+			pj[0].color = color; pj[1].color = color2; pj[3].color = color3; pj[2].color = color4;   
 		}
 		
 		std::stringstream ss;
@@ -142,7 +137,6 @@ int main(){
 					++qtty;
 				}
 			}
-			//if(! max - min <= 3) reboot = true;
 			if((max - min <= 3 && qtty >= 3) || reboot) {
 				std::ostringstream oss;
 				oss << max;
@@ -170,7 +164,7 @@ int main(){
 		window.draw(bSprite);
 		window.draw(text);
         window.draw(r);
-/**/	window.draw(pj, sf::BlendAlpha);
+	window.draw(pj, sf::BlendAlpha);
         window.display();
     }
 }
