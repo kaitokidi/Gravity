@@ -43,7 +43,7 @@ int main(){
 	
 	std::map<sf::Color, sf::Time> colorsColiding;
 
-	int pantalla = 3;
+	int pantalla = 0;
 	bool reboot = false;
 	bool needshiet = true;
 	
