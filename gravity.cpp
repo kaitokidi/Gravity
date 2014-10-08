@@ -98,17 +98,29 @@ int main(){
 	pj[3].position = sf::Vector2<float>(r.getPosition().x, r.getPosition().y + fr.height-2);
 	pj[2].position = sf::Vector2<float>(r.getPosition().x + fr.width-2, r.getPosition().y + fr.height-2);
 
+	for(int i = 0; i < 4; ++i) pj[i].color = sf::Color::Black;
+	
 		if(r.getPosition().y >= 0 && r.getPosition().x+r.getSize().x < window.getSize().x-1 && r.getPosition().x > 1 && r.getPosition().y+r.getSize().y < window.getSize().y) {
+
 			sf::Color color = getColisionColor(r.getPosition().x, r.getPosition().y, bimg, bSprite);
 			if(color != sf::Color::Black) colorsColiding[color]  += sf::seconds(deltatime);
 			sf::Color color2 = getColisionColor(r.getPosition().x + fr.width, r.getPosition().y, bimg, bSprite);
 			if(color2 != sf::Color::Black) colorsColiding[color2] += sf::seconds(deltatime);
+			pj[0].color = color; pj[1].color = color2; 
 			sf::Color color3 = getColisionColor(r.getPosition().x, r.getPosition().y + fr.height , bimg, bSprite);
 			if(color3 != sf::Color::Black) colorsColiding[color3] += sf::seconds(deltatime);
 			sf::Color color4 = getColisionColor(r.getPosition().x + fr.width, r.getPosition().y + fr.height, bimg, bSprite);
 			if(color4 != sf::Color::Black) colorsColiding[color4] += sf::seconds(deltatime);
-			pj[0].color = color; pj[1].color = color2; pj[3].color = color3; pj[2].color = color4;   
+			pj[3].color = color3; pj[2].color = color4;   
 		}
+		else if(r.getPosition().y+fr.height >= 0){
+  			sf::Color color3 = getColisionColor(r.getPosition().x, r.getPosition().y + fr.height , bimg, bSprite);
+			if(color3 != sf::Color::Black) colorsColiding[color3] += sf::seconds(deltatime);
+			sf::Color color4 = getColisionColor(r.getPosition().x + fr.width, r.getPosition().y + fr.height, bimg, bSprite);
+			if(color4 != sf::Color::Black) colorsColiding[color4] += sf::seconds(deltatime);
+			pj[3].color = color3; pj[2].color = color4;     
+		}
+		
 		
 		std::stringstream ss;
 		for (std::map<sf::Color, sf::Time>::iterator it=colorsColiding.begin(); it!=colorsColiding.end(); ++it){
@@ -160,11 +172,11 @@ int main(){
 			else reboot = true;
 		}
 
-        window.clear();
-		window.draw(bSprite);
-		window.draw(text);
-        window.draw(r);
+	window.clear();
+	window.draw(bSprite);
+	window.draw(text, sf::BlendAlpha);
+	window.draw(r);
 	window.draw(pj, sf::BlendAlpha);
-        window.display();
+	window.display();
     }
 }
