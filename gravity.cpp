@@ -36,6 +36,7 @@ int main(){
 	sf::Text text; sf::Font font; 
 	if(! font.loadFromFile("font.ttf")) std::cout << "penguin" << std::endl;
 	text.setFont(font); text.setPosition(0,0); text.setString("penguin <3");
+	text.setColor(sf::Color(255,255,255));
 	
 	sf::Image bimg;
 	sf::Texture bTex;
@@ -133,10 +134,14 @@ int main(){
 			else if(aux.g >= aux.r and aux.g >= aux.b) col = "Green:";
 			else if(aux.b >= aux.g and aux.b >= aux.r) col = "Blue:";
 			if((int)(it->second).asSeconds() > 0) 
-				ss << "   " << col << " " << (int)(it->second).asSeconds();		
+				ss << " " << col << " " << (int)(it->second).asSeconds();		
 		}
 		std::string str = ss.str();
 		text.setString(str);
+		
+		sf::Text textBg = text;
+		textBg.setScale(1.1,1.1);
+		textBg.setColor(sf::Color(100,100,100));
 		
 		int max = 0;
 		int qtty = 0;
@@ -153,11 +158,18 @@ int main(){
 				std::ostringstream oss;
 				oss << max;
 				std::string strn = oss.str();
-				if(!reboot)text.setString("YouWonTheGame!   punctuation = " + strn);
-				else text.setString(" Nice try!");
+				if(!reboot) str = "YouWonTheGame!   punctuation = " + strn;	//text.setString("YouWonTheGame!   punctuation = " + strn);
+				else str = " Nice try! "; 									//text.setString(" Nice try!");
 				window.clear();
 				window.draw(bSprite);
-				window.draw(text);
+				for(int i = 0; i < str.size(); ++i) {
+					text.setString(str[i]);
+					textBg.setString(str[i]);
+					text.setPosition(text.getCharacterSize()*i, 0);
+					textBg.setPosition(text.getCharacterSize()*i, 0);
+					window.draw(textBg, sf::BlendAlpha);
+					window.draw(text, sf::BlendAlpha);
+				}
 				window.draw(r);
 				window.display();
 				sf::Clock c; float t = 0;
@@ -174,7 +186,14 @@ int main(){
 
 	window.clear();
 	window.draw(bSprite);
-	window.draw(text, sf::BlendAlpha);
+	for(int i = 0; i < str.size(); ++i) {
+		text.setString(str[i]);
+		textBg.setString(str[i]);
+		text.setPosition(text.getCharacterSize()/1.5*i, 0);
+		textBg.setPosition(text.getCharacterSize()/1.5*i, 0);
+		window.draw(textBg, sf::BlendAlpha);
+		window.draw(text, sf::BlendAlpha);
+	}
 	window.draw(r);
 	window.draw(pj, sf::BlendAlpha);
 	window.display();
