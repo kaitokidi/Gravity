@@ -19,7 +19,7 @@ sf::Color getColisionColor(float posx, float posy, sf::Image& img, sf::Sprite& b
 	return img.getPixel( posx/bSprite.getScale().x, posy/bSprite.getScale().y);
 }
 
-int main(){
+int main(int argc, const char* argv[]){
     
     sf::Vector2f v = sf::Vector2f(0,0);
     sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Gravity");
@@ -45,6 +45,7 @@ int main(){
 	std::map<sf::Color, sf::Time> colorsColiding;
 
 	int pantalla = 0;
+	if(argc > 1) pantalla = atoi(argv[1]);
 	bool reboot = false;
 	bool needshiet = true;
 	
@@ -72,11 +73,15 @@ int main(){
         while(window.pollEvent(event)) if (event.type == sf::Event::Closed) window.close(); 
 		if(r.getPosition().y > 0){
 			if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up   ))  v.y = (int)window.getSize().y/2 * -1;
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::W   ))  v.y = (int)window.getSize().y/2 * -1;
 			if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space))  v.y = (int)window.getSize().y * -1;
 		}
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left ))  v.x = (int)window.getSize().x/20 * -1;
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::A ))  v.x = (int)window.getSize().x/20 * -1;
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))  v.x = window.getSize().x/20;
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::R)) { reboot = true; v.x = 0; }
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))  v.x = window.getSize().x/20;
+
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::R)) { reboot = true; v.x = 0; }
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) window.close();
         r.move(v * deltatime);
         
@@ -122,8 +127,9 @@ int main(){
 			pj[3].color = color3; pj[2].color = color4;     
 		}
 		
+		std::map<std::string, int> colorTimers;
+		colorTimers["Red:"] = colorTimers["Yellow:"] = colorTimers["Green:"] = colorTimers["Blue:"] = 0; 
 		
-		std::stringstream ss;
 		for (std::map<sf::Color, sf::Time>::iterator it=colorsColiding.begin(); it!=colorsColiding.end(); ++it){
 			std::string col = "wat:";
 			sf::Color aux = (it->first);
@@ -134,7 +140,13 @@ int main(){
 			else if(aux.g >= aux.r and aux.g >= aux.b) col = "Green:";
 			else if(aux.b >= aux.g and aux.b >= aux.r) col = "Blue:";
 			if((int)(it->second).asSeconds() > 0) 
-				ss << " " << col << " " << (int)(it->second).asSeconds();		
+				colorTimers[col] += (int)(it->second).asSeconds();
+		}
+		
+		std::stringstream ss;
+		for (std::map<std::string, int>::iterator it=colorTimers.begin(); it!=colorTimers.end(); ++it){
+			if(it->second > 0) 
+				ss << " " << it->first << "" << it->second;		
 		}
 		std::string str = ss.str();
 		text.setString(str);
@@ -154,7 +166,7 @@ int main(){
 					++qtty;
 				}
 			}
-			if((max - min <= 3 && qtty >= 3) || reboot) {
+			if((max - min <= 3 && qtty >= 4) || reboot || pantalla < 2) {
 				std::ostringstream oss;
 				oss << max;
 				std::string strn = oss.str();
