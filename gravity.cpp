@@ -23,15 +23,15 @@ int main(int argc, const char* argv[]){
     
     sf::Vector2f v = sf::Vector2f(0,0);
     sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Gravity");
-   
-    const float g = (int)window.getSize().y*2 ;
+       sf::Vector2f screenSize = sf::Vector2f(window.getSize().x,window.getSize().y);
+    float g = (int)screenSize.y*2 ;
 
-    sf::RectangleShape r(sf::Vector2f(window.getSize().x/10, window.getSize().y/10));
+    sf::RectangleShape r(sf::Vector2f(screenSize.x/10, screenSize.y/10));
     r.setPosition(0,0); r.setFillColor(sf::Color::White);
     
     sf::Clock timer;
     float deltatime = 0;
-	float ground = window.getSize().y-4; //  float ground = window.getSize().y*6/7;
+	float ground = screenSize.y-4; //  float ground = screenSize.y*6/7;
 	
 	sf::Text text; sf::Font font; 
 	if(! font.loadFromFile("font.ttf")) std::cout << "penguin" << std::endl;
@@ -52,34 +52,48 @@ int main(int argc, const char* argv[]){
     //GAME LOOP
     while(window.isOpen()){
 		if(needshiet){
-			v = sf::Vector2f(0,0);
-			colorsColiding.clear();
-			r.setPosition(0,0);
-			std::stringstream s;
-			s << "board" << pantalla;		
-			std::string board = s.str();
-			if(!bimg.loadFromFile(board+".png")) std::cout << "I CAN'T LOAD BOARD IMAGE" << std::endl;
-			if(!bTex.loadFromFile(board+".png")) std::cout << "I CAN'T LOAD BOARD texture" << std::endl;
-			bSprite.setTexture(bTex, true);
-			bSprite.scale(window.getSize().x/bSprite.getGlobalBounds().width , 
-							window.getSize().y/bSprite.getGlobalBounds().height);
-			needshiet = false;
-			deltatime = 0;
+				ground = screenSize.y-4;
+				g = (int)screenSize.y*2;
+				v = sf::Vector2f(0,0);
+				colorsColiding.clear();
+				r = sf::RectangleShape(sf::Vector2f(screenSize.x/10, screenSize.y/10));
+				r.setPosition(0,0);
+				r.setFillColor(sf::Color::White);
+				std::stringstream s;
+				s << "board" << pantalla;		
+				std::string board = s.str();
+				if(!bimg.loadFromFile(board+".png")) std::cout << "I CAN'T LOAD BOARD IMAGE" << std::endl;
+				if(!bTex.loadFromFile(board+".png")) std::cout << "I CAN'T LOAD BOARD texture" << std::endl;
+				bSprite.setTexture(bTex, true);
+				
+ 				bSprite.setScale(screenSize.x/bSprite.getLocalBounds().width , 
+ 								screenSize.y/bSprite.getLocalBounds().height);
+				
+				needshiet = false;
+				deltatime = 0;
 		}
 		
         deltatime = timer.restart().asSeconds();
         
         sf::Event event;
-        while(window.pollEvent(event)) if (event.type == sf::Event::Closed) window.close(); 
-		if(r.getPosition().y > 0){
-			if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up   ))  v.y = (int)window.getSize().y/2 * -1;
-			if(sf::Keyboard::isKeyPressed(sf::Keyboard::W   ))  v.y = (int)window.getSize().y/2 * -1;
-			if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space))  v.y = (int)window.getSize().y * -1;
+        while(window.pollEvent(event)) {
+			if (event.type == sf::Event::Closed) window.close(); 
+			if (event.type == sf::Event::Resized) {window.setSize(sf::Vector2u(event.size.width, event.size.height)); needshiet = true;}
+			if (pantalla < 2 && event.type == sf::Event::MouseButtonPressed){
+					if (event.mouseButton.button == sf::Mouse::Left) {
+						r.setPosition(event.mouseButton.x*screenSize.x/window.getSize().x, event.mouseButton.y*screenSize.y/window.getSize().y);
+					}
+			}
 		}
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left ))  v.x = (int)window.getSize().x/20 * -1;
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::A ))  v.x = (int)window.getSize().x/20 * -1;
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))  v.x = window.getSize().x/20;
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))  v.x = window.getSize().x/20;
+		if(r.getPosition().y > 0){
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up   ))  v.y = (float)screenSize.y/2 * -1;
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::W   ))  v.y = (float)screenSize.y/2 * -1;
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space))  v.y = (float)screenSize.y/1.5 * -1;
+		}
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left ))  v.x = (float)screenSize.x/20 * -1;
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::A ))  v.x = (float)screenSize.x/20 * -1;
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))  v.x = (float)screenSize.x/20;
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))  v.x = (float)screenSize.x/20;
 
 		if(sf::Keyboard::isKeyPressed(sf::Keyboard::R)) { reboot = true; v.x = 0; }
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) window.close();
@@ -97,7 +111,10 @@ int main(int argc, const char* argv[]){
 		r.setOutlineThickness(1);
         
 		if(r.getPosition().x < 1) r.setPosition(1, r.getPosition().y);
-        if(r.getPosition().x + r.getSize().x+3 > window.getSize().x) r.setPosition(window.getSize().x-r.getSize().x-3, r.getPosition().y);
+        if(r.getPosition().x + r.getSize().x+3 > screenSize.x){
+			r.setPosition(screenSize.x-r.getSize().x-3, r.getPosition().y);
+			//std::cout << window.getSize().x-r.getSize().x-3 << " my pos ----- wind size" << window.getSize().x << std::endl;
+		}
         
    	sf::VertexArray pj(sf::Quads, 4);
         sf::FloatRect fr = r.getGlobalBounds();
@@ -108,7 +125,7 @@ int main(int argc, const char* argv[]){
 
 	for(int i = 0; i < 4; ++i) pj[i].color = sf::Color::Black;
 	
-		if(r.getPosition().y >= 0 && r.getPosition().x+r.getSize().x < window.getSize().x-1 && r.getPosition().x > 1 && r.getPosition().y+r.getSize().y < window.getSize().y) {
+		if(r.getPosition().y >= 0 && r.getPosition().x+r.getSize().x < screenSize.x-1 && r.getPosition().x > 1 && r.getPosition().y+r.getSize().y < screenSize.y) {
 
 			sf::Color color = getColisionColor(r.getPosition().x, r.getPosition().y, bimg, bSprite);
 			if(color != sf::Color::Black) colorsColiding[color]  += sf::seconds(deltatime);
@@ -176,14 +193,16 @@ int main(int argc, const char* argv[]){
 				else str = " Nice try! "; 									//text.setString(" Nice try!");
 				window.clear();
 				window.draw(bSprite);
-				for(int i = 0; i < str.size(); ++i) {
-					text.setString(str[i]);
-					textBg.setString(str[i]);
-					text.setPosition(text.getCharacterSize()*i, 0);
-					textBg.setPosition(text.getCharacterSize()*i, 0);
-					window.draw(textBg, sf::BlendAlpha);
-					window.draw(text, sf::BlendAlpha);
-				}
+				if(pantalla >= 2){
+					for(int i = 0; i < str.size(); ++i) {
+						text.setString(str[i]);
+						textBg.setString(str[i]);
+						text.setPosition(text.getCharacterSize()*i, 0);
+						textBg.setPosition(text.getCharacterSize()*i, 0);
+						window.draw(textBg, sf::BlendAlpha);
+						window.draw(text, sf::BlendAlpha);
+					}
+			    }
 				window.draw(r);
 				window.display();
 				sf::Clock c; float t = 0;
