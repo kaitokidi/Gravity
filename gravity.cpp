@@ -159,8 +159,8 @@ int main(int argc, const char* argv[]){
 		int qtty = 0;
 		int min = 99999999;
 		if(colorsColiding[sf::Color::White] != sf::seconds(0.0) || reboot){
-			for (std::map<sf::Color, sf::Time>::iterator it=colorsColiding.begin(); it!=colorsColiding.end(); ++it){
-				int num = (int)(it->second).asSeconds();
+			for (std::map<std::string, int>::iterator it=colorTimers.begin(); it!=colorTimers.end(); ++it){
+				int num = (int)(it->second);
 				if(num > 0) {
 					if(num > max) max = num; if(num < min) min = num;
 					++qtty;
@@ -170,7 +170,7 @@ int main(int argc, const char* argv[]){
 				std::ostringstream oss;
 				oss << max;
 				std::string strn = oss.str();
-				if(!reboot) str = "YouWonTheGame!   punctuation = " + strn;	//text.setString("YouWonTheGame!   punctuation = " + strn);
+				if(!reboot) str = "YouWonTheGame! punctuation = " + strn;	//text.setString("YouWonTheGame!   punctuation = " + strn);
 				else str = " Nice try! "; 									//text.setString(" Nice try!");
 				window.clear();
 				window.draw(bSprite);
