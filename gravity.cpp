@@ -83,7 +83,9 @@ int main(int argc, const char* argv[]){
 
 		if(sf::Keyboard::isKeyPressed(sf::Keyboard::R)) { reboot = true; v.x = 0; }
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) window.close();
-        r.move(v * deltatime);
+        
+		if(pantalla < 2) r.move(v*3.0f * deltatime);
+        else r.move(v * deltatime);
         
 		if(r.getPosition().y < 0) {v.y += g*deltatime;}
         if( (r.getPosition().y + r.getSize().y) < ground || v.y < 0) v.y += g *deltatime;
@@ -198,6 +200,8 @@ int main(int argc, const char* argv[]){
 
 	window.clear();
 	window.draw(bSprite);
+	window.draw(r);
+	window.draw(pj, sf::BlendAlpha);
 	for(int i = 0; i < str.size(); ++i) {
 		text.setString(str[i]);
 		textBg.setString(str[i]);
@@ -206,8 +210,6 @@ int main(int argc, const char* argv[]){
 		window.draw(textBg, sf::BlendAlpha);
 		window.draw(text, sf::BlendAlpha);
 	}
-	window.draw(r);
-	window.draw(pj, sf::BlendAlpha);
 	window.display();
     }
 }
