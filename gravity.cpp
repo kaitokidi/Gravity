@@ -1,5 +1,6 @@
 //LUDUM DARE 30
 #include <map>
+#include <cmath>
 #include <string>
 #include <sstream>   
 #include <iostream>
@@ -57,7 +58,7 @@ int main(int argc, const char* argv[]){
 				v = sf::Vector2f(0,0);
 				colorsColiding.clear();
 				r = sf::RectangleShape(sf::Vector2f(screenSize.x/10, screenSize.y/10));
-				r.setPosition(0,0);
+				r.setPosition(0,0); r.setOrigin(0,0);
 				r.setFillColor(sf::Color::White);
 				std::stringstream s;
 				s << "board" << pantalla;		
@@ -203,12 +204,22 @@ int main(int argc, const char* argv[]){
 						window.draw(text, sf::BlendAlpha);
 					}
 			    }
-				window.draw(r);
-				window.display();
-				sf::Clock c; float t = 0;
+// 				window.draw(r);
+// 				window.display();
+				sf::Clock c; float t = 0.0;
+				float deltaAux = 0.0;
+					r.setOrigin(r.getSize().x/2, r.getSize().y/2);
+					r.move(r.getSize().x/2, r.getSize().y/2);
 				while(t < 3){
-					t += c.restart().asSeconds();
-					timer.restart();
+					r.setOutlineThickness(0);
+					deltaAux = c.restart().asSeconds();
+					t += deltaAux;
+					r.rotate(2*t);
+					r.scale(1-t/60,1-t/60);
+					r.setFillColor(sf::Color(83*t, 83*t, 83*t));
+					window.draw(r);
+					window.display();
+     				timer.restart();
 				}
 				if(!reboot) ++pantalla;
 				needshiet = true;
@@ -216,7 +227,7 @@ int main(int argc, const char* argv[]){
 			}
 			else reboot = true;
 		}
-
+else{
 	window.clear();
 	window.draw(bSprite);
 	window.draw(r);
@@ -230,5 +241,6 @@ int main(int argc, const char* argv[]){
 		window.draw(text, sf::BlendAlpha);
 	}
 	window.display();
-    }
+}
+  }
 }
