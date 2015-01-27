@@ -2,11 +2,11 @@
 
 all: main.o everything exe
 
-main.o: gravity.cpp
-	g++ -c gravity.cpp	
+main.o: *.cpp
+	g++ -c *.cpp	
 	
 everything:
-	g++ -o gravity gravity.o -lsfml-graphics -lsfml-window -lsfml-system -lsfml-network
+	g++ -o gravity *.o -lsfml-graphics -lsfml-window -lsfml-system -lsfml-network
 		
 exe:
 	./gravity

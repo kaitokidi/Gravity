@@ -1,9 +1,12 @@
-//LUDUM DARE 30
+//GRAVITY
 #include <map>
 #include <cmath>
 #include <string>
 #include <sstream>   
+#include <fstream>
 #include <iostream>
+#include "menu2.hpp"
+#include "Portada.hpp"
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 
@@ -30,12 +33,10 @@ int main(int argc, const char* argv[]){
     sf::RectangleShape r(sf::Vector2f(screenSize.x/10, screenSize.y/10));
     r.setPosition(0,0); r.setFillColor(sf::Color::White);
     
-    sf::Clock timer;
-    float deltatime = 0;
 	float ground = screenSize.y-4; //  float ground = screenSize.y*6/7;
 	
 	sf::Text text; sf::Font font; 
-	if(! font.loadFromFile("font.ttf")) std::cout << "penguin" << std::endl;
+	if(! font.loadFromFile("res/font.ttf")) std::cout << "fail on font load" << std::endl;
 	text.setFont(font); text.setPosition(0,0); text.setString("penguin <3");
 	text.setColor(sf::Color(255,255,255));
 	
@@ -46,10 +47,17 @@ int main(int argc, const char* argv[]){
 	std::map<sf::Color, sf::Time> colorsColiding;
 
 	int pantalla = 0;
+    float boardTime = 0;
 	if(argc > 1) pantalla = atoi(argv[1]);
 	bool reboot = false;
 	bool needshiet = true;
 	
+    Portada p;
+    sf::Clock timer;
+    TextMenu textMenu;
+
+    float deltatime = 0;
+    
     //GAME LOOP
     while(window.isOpen()){
 		if(needshiet){
@@ -63,8 +71,8 @@ int main(int argc, const char* argv[]){
 				std::stringstream s;
 				s << "board" << pantalla;		
 				std::string board = s.str();
-				if(!bimg.loadFromFile(board+".png")) std::cout << "I CAN'T LOAD BOARD IMAGE" << std::endl;
-				if(!bTex.loadFromFile(board+".png")) std::cout << "I CAN'T LOAD BOARD texture" << std::endl;
+				if(!bimg.loadFromFile("res/"+board+".png")) std::cout << "I CAN'T LOAD BOARD IMAGE" << std::endl;
+				if(!bTex.loadFromFile("res/"+board+".png")) std::cout << "I CAN'T LOAD BOARD texture" << std::endl;
 				bSprite.setTexture(bTex, true);
 				
  				bSprite.setScale(screenSize.x/bSprite.getLocalBounds().width , 
@@ -72,9 +80,11 @@ int main(int argc, const char* argv[]){
 				
 				needshiet = false;
 				deltatime = 0;
+                boardTime = 0;
 		}
 		
         deltatime = timer.restart().asSeconds();
+        boardTime += deltatime;
         
         sf::Event event;
         while(window.pollEvent(event)) {
@@ -179,6 +189,7 @@ int main(int argc, const char* argv[]){
 		int qtty = 0;
 		int min = 99999999;
 		if(colorsColiding[sf::Color::White] != sf::seconds(0.0) || reboot){
+            std::ostringstream oss;
 			for (std::map<std::string, int>::iterator it=colorTimers.begin(); it!=colorTimers.end(); ++it){
 				int num = (int)(it->second);
 				if(num > 0) {
@@ -187,10 +198,9 @@ int main(int argc, const char* argv[]){
 				}
 			}
 			if((max - min <= 3 && qtty >= 4) || reboot || pantalla < 2) {
-				std::ostringstream oss;
 				oss << max;
 				std::string strn = oss.str();
-				if(!reboot) str = "YouWonTheGame! punctuation = " + strn;	//text.setString("YouWonTheGame!   punctuation = " + strn);
+				if(!reboot) str = "YouWonTheGame! score = " + strn;	//text.setString("YouWonTheGame!   punctuation = " + strn);
 				else str = " Nice try! "; 									//text.setString(" Nice try!");
 				window.clear();
 				window.draw(bSprite);
@@ -211,6 +221,10 @@ int main(int argc, const char* argv[]){
 					r.setOrigin(r.getSize().x/2, r.getSize().y/2);
 					r.move(r.getSize().x/2, r.getSize().y/2);
 				while(t < 3){
+                    while(window.pollEvent(event)) {
+                        if (event.type == sf::Event::Closed) window.close(); 
+                        if (event.type == sf::Event::Resized) {window.setSize(sf::Vector2u(event.size.width, event.size.height)); needshiet = true;}
+                    }
 					r.setOutlineThickness(0);
 					deltaAux = c.restart().asSeconds();
 					t += deltaAux;
@@ -221,7 +235,51 @@ int main(int argc, const char* argv[]){
 					window.display();
      				timer.restart();
 				}
-				if(!reboot) ++pantalla;
+				if(!reboot) {
+                    if(pantalla == 1) {
+                        p.display(&window, "res/credits.png");    
+                        textMenu.displayText(&window, "Start");
+                    }
+                    ++pantalla;
+
+                    std::string score = strn;
+                    std::stringstream s; s << "res/board" << pantalla << ".txt";       
+                    std::string filePath = s.str();
+                    
+                    std::ostringstream boardtimer;
+                    boardtimer << boardTime;
+                    std::string bTime = boardtimer.str();
+                    
+                    std::string bestTime = "0";
+                    std::string bestScore = "0";
+                    std::ifstream myfile;
+                    myfile.open(filePath.c_str());
+                        
+                        std::string actual;   
+                        getline (myfile,actual);
+                        
+                        getline (myfile,actual);                        
+                        if(actual.size() < score.size()) bestScore = actual+"\n";
+                        else if(actual.size() > score.size()) bestScore = score+"\n";
+                        else if(actual < score) bestScore = actual+"\n";
+                        else bestScore = score+"\n";
+                        
+                        getline (myfile,actual);
+                        if(actual.size() < bTime.size()) bestTime = actual+"\n";
+                        else if(actual.size() > bTime.size()) bestTime = bTime+"\n";
+                        else if(actual < bTime) bestTime = actual+"\n";
+                        else bestTime = bTime+"\n";
+                         
+                    myfile.close();
+                    
+                    std::ofstream my_file;
+                    my_file.open(filePath.c_str());
+                        my_file << "1\n";
+                        my_file << bestScore+"\n";
+                        my_file << bestTime+"\n";
+                    my_file.close();
+                     
+                }
 				needshiet = true;
 				reboot = false;
 			}
