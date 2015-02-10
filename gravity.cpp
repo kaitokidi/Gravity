@@ -228,8 +228,8 @@ int main(int argc, const char* argv[]){
 					r.setOutlineThickness(0);
 					deltaAux = c.restart().asSeconds();
 					t += deltaAux;
-					r.rotate(2*t);
-					r.scale(1-t/60,1-t/60);
+					r.setRotation(360/3*t);
+					r.setScale(1-t/3,1-t/3);
 					r.setFillColor(sf::Color(83*t, 83*t, 83*t));
 					window.draw(r);
 					window.display();
