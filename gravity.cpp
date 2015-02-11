@@ -224,7 +224,7 @@ int main(int argc, const char* argv[]){
 				                int maxT = 3;
                 while(t < maxT){
                     while(window.pollEvent(event)) {
-                        if (event.type == sf::Event::Closed) window.close();
+                        if (event.type == sf::Event::Closed) { window.close(); exit(0);}
                         if (event.type == sf::Event::Resized) {window.setSize(sf::Vector2u(event.size.width, event.size.height)); needshiet = true;}
                     }
                     r.setOutlineThickness(0);
