@@ -21,6 +21,7 @@ namespace sf{
 		else return false;
 	}
 }
+
 sf::Color getColisionColor(float posx, float posy, sf::Image& img, sf::Sprite& bSprite){
 	return img.getPixel( posx/bSprite.getScale().x, posy/bSprite.getScale().y);
 }
@@ -225,7 +226,7 @@ int main(int argc, const char* argv[]){
 			if((max - min <= 3 && qtty >= 4) || reboot || pantalla < 2) {
 				oss << max;
 				std::string strn = oss.str();
-				if(!reboot) str = "YouWonTheGame! score = " + strn;	//text.setString("YouWonTheGame!   punctuation = " + strn);
+				if(!reboot) str = "Well Done! score = " + strn;	//text.setString("YouWonTheGame!   punctuation = " + strn);
 				else str = " Nice try! "; 									//text.setString(" Nice try!");
 				window.clear();
 				window.draw(bSprite);
@@ -286,8 +287,8 @@ int main(int argc, const char* argv[]){
                     boardtimer << boardTime;
                     std::string bTime = boardtimer.str();
                     
-                    std::string bestTime = "0";
-                    std::string bestScore = "0";
+                    std::string bestTime = "b";
+                    std::string bestScore = "a";
                     std::ifstream myfile;
                     myfile.open(filePath.c_str());
                         
@@ -295,16 +296,16 @@ int main(int argc, const char* argv[]){
                         getline (myfile,actual);
                         
                         getline (myfile,actual);                        
-                        if(actual.size() < score.size()) bestScore = actual+"\n";
-                        else if(actual.size() > score.size()) bestScore = score+"\n";
-                        else if(actual < score) bestScore = actual+"\n";
-                        else bestScore = score+"\n";
+                        if(actual.size() < score.size()) bestScore = actual;
+                        else if(actual.size() > score.size()) bestScore = score;
+                        else if(actual < score) bestScore = actual;
+                        else bestScore = score;
                         
                         getline (myfile,actual);
-                        if(actual.size() < bTime.size()) bestTime = actual+"\n";
-                        else if(actual.size() > bTime.size()) bestTime = bTime+"\n";
-                        else if(actual < bTime) bestTime = actual+"\n";
-                        else bestTime = bTime+"\n";
+                        if(actual.size() < bTime.size()) bestTime = actual;
+                        else if(actual.size() > bTime.size()) bestTime = bTime;
+                        else if(actual < bTime) bestTime = actual;
+                        else bestTime = bTime;
                          
                     myfile.close();
                     

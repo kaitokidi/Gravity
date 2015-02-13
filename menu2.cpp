@@ -87,3 +87,15 @@
                 
         }
     }
+    
+     void TextMenu::displayTextPos(sf::RenderWindow* window, std::string s , sf::Color c , float posx, float posy ){
+        open = true;
+        t.setString(s);
+        t.setPosition(posx, posy);
+        t.setColor(c);
+
+            window->draw(t);
+
+            window->display();
+
+    }
