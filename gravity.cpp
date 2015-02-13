@@ -277,7 +277,6 @@ int main(int argc, const char* argv[]){
                         std::string str = ss.str();
                         textMenu.displayText(&window, "Next Level -> "+str);
                     }
-                    ++pantalla;
 
                     std::string score = strn;
                     std::stringstream s; s << "res/board" << pantalla << ".txt";       
@@ -287,8 +286,8 @@ int main(int argc, const char* argv[]){
                     boardtimer << boardTime;
                     std::string bTime = boardtimer.str();
                     
-                    std::string bestTime = "b";
-                    std::string bestScore = "a";
+                    std::string bestTime = "0";
+                    std::string bestScore = "0";
                     std::ifstream myfile;
                     myfile.open(filePath.c_str());
                         
@@ -315,20 +314,22 @@ int main(int argc, const char* argv[]){
                         my_file << bestScore+"\n";
                         my_file << bestTime+"\n";
                     my_file.close();
-                     
+            
+                    ++pantalla;
                 }
 				needshiet = true;
 				reboot = false;
 			}
 			else reboot = true;
+            
 		}
     else{
         window.clear();
         window.draw(bSprite);
-        if(pantalla < 2) button.draw(window);
         window.draw(r);
         window.draw(pj, sf::BlendAlpha);
-        for(int i = 0; i < str.size(); ++i) {
+        if(pantalla < 2) button.draw(window);
+        else for(int i = 0; i < str.size(); ++i) {
             text.setString(str[i]);
             textBg.setString(str[i]);
             text.setPosition(text.getCharacterSize()/1.5*i, 0);

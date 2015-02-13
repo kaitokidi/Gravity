@@ -16,9 +16,10 @@
                 switch (event.type) {
                 case sf::Event::Closed:
                     window->close();
+                    exit(0);
                     break;
                 case sf::Event::KeyPressed:
-                    if (event.key.code == sf::Keyboard::Escape) window->close();
+                    if (event.key.code == sf::Keyboard::Escape) { window->close(); exit(0); }
                     break;
                 case sf::Event::MouseButtonPressed:
                     if (event.mouseButton.button == sf::Mouse::Left) {
