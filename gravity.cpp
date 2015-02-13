@@ -1,12 +1,14 @@
 //GRAVITY
+#include "LevelMenu.hpp"
+#include "Portada.hpp"
+#include "menu2.hpp"
+#include "button.h"
 #include <map>
 #include <cmath>
 #include <string>
 #include <sstream>   
 #include <fstream>
 #include <iostream>
-#include "menu2.hpp"
-#include "Portada.hpp"
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 
@@ -36,7 +38,7 @@ int main(int argc, const char* argv[]){
 	float ground = screenSize.y-4; //  float ground = screenSize.y*6/7;
 	
 	sf::Text text; sf::Font font; 
-	if(! font.loadFromFile("res/font.ttf")) std::cout << "fail on font load" << std::endl;
+	if(! font.loadFromFile("res/font.ttf")) std::cerr << "fail on font load" << std::endl;
 	text.setFont(font); text.setPosition(0,0); text.setString("penguin <3");
 	text.setColor(sf::Color(255,255,255));
 	
@@ -55,6 +57,8 @@ int main(int argc, const char* argv[]){
     Portada p;
     sf::Clock timer;
     TextMenu textMenu;
+    
+    Button button;
 
     float deltatime = 0;
     
@@ -71,8 +75,8 @@ int main(int argc, const char* argv[]){
 				std::stringstream s;
 				s << "board" << pantalla;		
 				std::string board = s.str();
-				if(!bimg.loadFromFile("res/"+board+".png")) std::cout << "I CAN'T LOAD BOARD IMAGE" << std::endl;
-				if(!bTex.loadFromFile("res/"+board+".png")) std::cout << "I CAN'T LOAD BOARD texture" << std::endl;
+				if(!bimg.loadFromFile("res/"+board+".png")) std::cerr << "I CAN'T LOAD BOARD image" << std::endl;
+				if(!bTex.loadFromFile("res/"+board+".png")) std::cerr << "I CAN'T LOAD BOARD texture" << std::endl;
 				bSprite.setTexture(bTex, true);
 				
  				bSprite.setScale(screenSize.x/bSprite.getLocalBounds().width , 
@@ -82,6 +86,14 @@ int main(int argc, const char* argv[]){
 				deltatime = 0;
                 boardTime = 0;
                 timer.restart();
+                
+                if(pantalla < 2){
+                    button.setSize((window.getSize().x/10), (window.getSize().x/20));
+                    button.setPosition(window.getSize().x-button.getSize().x - 10,window.getSize().y-button.getSize().y - 10);
+                    button.setTextResizeText(" Levels ");
+                    button.setTexture("res/button.png");
+                } 
+                
 		}
 		
         deltatime = timer.restart().asSeconds();
@@ -89,14 +101,24 @@ int main(int argc, const char* argv[]){
         
         sf::Event event;
         while(window.pollEvent(event)) {
+            button.handleEvent(event);
 			if (event.type == sf::Event::Closed) window.close(); 
 			if (event.type == sf::Event::Resized) {window.setSize(sf::Vector2u(event.size.width, event.size.height)); needshiet = true;}
 			if (pantalla < 2 && event.type == sf::Event::MouseButtonPressed){
 					if (event.mouseButton.button == sf::Mouse::Left) {
-						r.setPosition(event.mouseButton.x*screenSize.x/window.getSize().x, event.mouseButton.y*screenSize.y/window.getSize().y);
+                        if(!button.isClicked()) r.setPosition(event.mouseButton.x*screenSize.x/window.getSize().x, event.mouseButton.y*screenSize.y/window.getSize().y);
 					}
 			}
 		}
+		
+		if(pantalla < 2 && button.hasBeenClicked()){
+            // arrenca el menú
+            LevelMenu levelMenu;
+            pantalla = levelMenu.display(&window);
+            needshiet = true;
+            timer.restart();
+        }
+		
 		if(r.getPosition().y > 0){
 			if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up   ))  v.y = (float)screenSize.y/2 * -1;
 			if(sf::Keyboard::isKeyPressed(sf::Keyboard::W   ))  v.y = (float)screenSize.y/2 * -1;
@@ -191,6 +213,7 @@ int main(int argc, const char* argv[]){
 		int min = 99999999;
 		if(colorsColiding[sf::Color::White] != sf::seconds(0.0) || reboot){
             std::ostringstream oss;
+            //COMPUTING MIN AND MAX NUMBER OF THE COLORS
 			for (std::map<std::string, int>::iterator it=colorTimers.begin(); it!=colorTimers.end(); ++it){
 				int num = (int)(it->second);
 				if(num > 0) {
@@ -198,6 +221,7 @@ int main(int argc, const char* argv[]){
 					++qtty;
 				}
 			}
+			//IF THE NEW LEVEL HAVE TO BE SETTED
 			if((max - min <= 3 && qtty >= 4) || reboot || pantalla < 2) {
 				oss << max;
 				std::string strn = oss.str();
@@ -205,7 +229,7 @@ int main(int argc, const char* argv[]){
 				else str = " Nice try! "; 									//text.setString(" Nice try!");
 				window.clear();
 				window.draw(bSprite);
-				if(pantalla >= 2){
+				if(pantalla >= 2){ //IN THE CASE OF COVER AND INSTRUCTIONS
 					for(int i = 0; i < str.size(); ++i) {
 						text.setString(str[i]);
 						textBg.setString(str[i]);
@@ -222,11 +246,12 @@ int main(int argc, const char* argv[]){
 					r.setOrigin(r.getSize().x/2, r.getSize().y/2);
 					r.move(r.getSize().x/2, r.getSize().y/2);
 				                int maxT = 3;
-                while(t < maxT){
+                while(t < maxT){ //MAKE THE ANIMATION TO CHANGE TO THE NEXT LVL
                     while(window.pollEvent(event)) {
+                        //button.handleEvent(event);
                         if (event.type == sf::Event::Closed) { window.close(); exit(0);}
                         if (event.type == sf::Event::Resized) {window.setSize(sf::Vector2u(event.size.width, event.size.height)); needshiet = true;}
-                        if (event.type == sf::Event::KeyPressed){ if (event.key.code == sf::Keyboard::Escape) { window->close(); exit(0); } }
+                        if (event.type == sf::Event::KeyPressed){ if (event.key.code == sf::Keyboard::Escape) { window.close(); exit(0); } }
                     }
                     r.setOutlineThickness(0);
                     deltaAux = c.restart().asSeconds();
@@ -237,11 +262,19 @@ int main(int argc, const char* argv[]){
 					window.draw(r);
 					window.display();
 				}
+				//IF IT IS A NEW LEVEL (NOT REBOOT)
 				if(!reboot) {
                     if(pantalla == 1) {
                         p.display(&window, "res/credits.png");    
                         textMenu.displayText(&window, "Start");
-                        textMenu.display_recieve_text(&window);
+//                        textMenu.display_recieve_text(&window);
+                    } else if (pantalla == 0) {
+                        //do nothing
+                    } else {
+                        std::stringstream ss;
+                        ss << pantalla;
+                        std::string str = ss.str();
+                        textMenu.displayText(&window, "Next Level -> "+str);
                     }
                     ++pantalla;
 
@@ -288,20 +321,21 @@ int main(int argc, const char* argv[]){
 			}
 			else reboot = true;
 		}
-else{
-	window.clear();
-	window.draw(bSprite);
-	window.draw(r);
-	window.draw(pj, sf::BlendAlpha);
-	for(int i = 0; i < str.size(); ++i) {
-		text.setString(str[i]);
-		textBg.setString(str[i]);
-		text.setPosition(text.getCharacterSize()/1.5*i, 0);
-		textBg.setPosition(text.getCharacterSize()/1.5*i, 0);
-		window.draw(textBg, sf::BlendAlpha);
-		window.draw(text, sf::BlendAlpha);
-	}
-	window.display();
-}
+    else{
+        window.clear();
+        window.draw(bSprite);
+        if(pantalla < 2) button.draw(window);
+        window.draw(r);
+        window.draw(pj, sf::BlendAlpha);
+        for(int i = 0; i < str.size(); ++i) {
+            text.setString(str[i]);
+            textBg.setString(str[i]);
+            text.setPosition(text.getCharacterSize()/1.5*i, 0);
+            textBg.setPosition(text.getCharacterSize()/1.5*i, 0);
+            window.draw(textBg, sf::BlendAlpha);
+            window.draw(text, sf::BlendAlpha);
+        }
+        window.display();
+    }
   }
 }

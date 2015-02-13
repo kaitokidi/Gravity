@@ -24,12 +24,12 @@
                 switch (event.type) {
                 case sf::Event::Closed:
                     window->close();
-                    exit(0);
+                    return "closed";
                     break;
                 case sf::Event::KeyPressed:
                     if (event.key.code == sf::Keyboard::Escape) {
                         window->close();
-                        exit(0);
+                        return "closed";
                     }
                     break;
                 case sf::Event::TextEntered:
