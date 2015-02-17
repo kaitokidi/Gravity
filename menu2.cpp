@@ -89,14 +89,53 @@
         }
     }
     
-     void TextMenu::displayTextPos(sf::RenderWindow* window, std::string s , sf::Color c , float posx, float posy ){
+    void TextMenu::drawText(sf::RenderWindow* window, std::string s , sf::Color c ){
+        open = true;
+        t.setString(s);
+        t.setPosition(window->getSize().x/2 - ((s.size()/2)*t.getCharacterSize()), window->getSize().y/2 - t.getCharacterSize()/2);
+        window->clear(c);
+
+        while(open){
+            
+            sf::Event event;
+            while (window->pollEvent(event)) {
+                switch (event.type) {
+                case sf::Event::Closed:
+                    window->close();
+                    exit(0);
+                    break;
+                case sf::Event::KeyPressed:
+                    if (event.key.code == sf::Keyboard::Escape) { window->close(); exit(0); }
+                    if (event.key.code == sf::Keyboard::Return) open = false;
+                    if (event.key.code == sf::Keyboard::Space) open = false;
+                    break;
+                case sf::Event::MouseButtonPressed:
+                    if (event.mouseButton.button == sf::Mouse::Left) {
+                        open = false;
+                    }
+                default:
+                    break;
+                }
+            }
+            window->draw(t);
+        }
+    }
+    
+    void TextMenu::displayTextPos(sf::RenderWindow* window, std::string s , sf::Color c , float posx, float posy ){
+        open = true;
+        t.setString(s);
+        t.setPosition(posx, posy);
+        t.setColor(c);
+        
+        window->draw(t);
+        window->display();
+    }
+    
+    void TextMenu::drawTextPos(sf::RenderWindow* window, std::string s , sf::Color c , float posx, float posy ){
         open = true;
         t.setString(s);
         t.setPosition(posx, posy);
         t.setColor(c);
 
-            window->draw(t);
-
-            window->display();
-
+        window->draw(t);
     }

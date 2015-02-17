@@ -66,14 +66,16 @@
                         std::string actual;   
                         getline (myfile,actual);
                         
-                        if(actual == "1") reloadImage = true;
+                        if(actual == "1") {
+                            reloadImage = true;
+                            getline (myfile,maxScore);
+                            getline (myfile,bestTime);
+                        }
                         else { 
                             reloadImage = false;
                             --actualLvl;
                         }
                         
-                        getline (myfile,maxScore);
-                        getline (myfile,bestTime);
 
                     myfile.close();
             }
@@ -89,14 +91,16 @@
                         std::string actual;   
                         getline (myfile,actual);
                         
-                        if(actual == "1") reloadImage = true;
+                        if(actual == "1") {
+                            reloadImage = true;
+                            getline (myfile,maxScore);
+                            getline (myfile,bestTime);
+                        }
                         else { 
                             reloadImage = false;
                             ++actualLvl;
                         }
                         
-                        getline (myfile,maxScore);
-                        getline (myfile,bestTime);
 
                     myfile.close();
                 }
@@ -113,10 +117,9 @@
             window->clear();
             forward.draw(*window);
             backward.draw(*window);
+            text.drawTextPos(window, "Max Score: " + maxScore, sf::Color::White, 0, 0);
+            text.drawTextPos(window, "Best Time: " + bestTime, sf::Color::White, 0, 50);
             centralImage.draw(*window);
-            text.displayTextPos(window, "Max Score: " + maxScore, sf::Color::White, 0, 0);
-            text.displayTextPos(window, "Best Time: " + bestTime, sf::Color::White, 0, 50);
-            
             window->display();       
         }
     }
