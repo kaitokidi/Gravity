@@ -1,8 +1,4 @@
 //GRAVITY
-#include "LevelMenu.hpp"
-#include "Portada.hpp"
-#include "menu2.hpp"
-#include "button.h"
 #include <map>
 #include <cmath>
 #include <string>
@@ -11,6 +7,12 @@
 #include <iostream>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+
+#include "button.h"
+#include "menu2.hpp"
+//#include "Effect.hpp"
+#include "Portada.hpp"
+#include "LevelMenu.hpp"
 
 namespace sf{
 	bool operator< (const sf::Color& c1, const sf::Color& c2){
@@ -58,6 +60,9 @@ int main(int argc, const char* argv[]){
     Portada p;
     sf::Clock timer;
     TextMenu textMenu;
+    /*Effect effect;
+    effect.loadAnimation("res/explosion", 5);
+    effect.setOrigin(effect.getGlobalBounds().width/2, effect.getGlobalBounds().height/2);*/
     
     Button button;
 
@@ -99,6 +104,7 @@ int main(int argc, const char* argv[]){
 		
         deltatime = timer.restart().asSeconds();
         boardTime += deltatime;
+        //effect.update(deltatime);
         
         sf::Event event;
         while(window.pollEvent(event)) {
@@ -131,6 +137,7 @@ int main(int argc, const char* argv[]){
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))  v.x = (float)screenSize.x/20;
 
 		if(sf::Keyboard::isKeyPressed(sf::Keyboard::R)) { reboot = true; v.x = 0; }
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::N)) { needshiet = true; v.x = 0; ++pantalla; }
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) window.close();
         
 		if(pantalla < 2) r.move(v*3.0f * deltatime);
@@ -158,6 +165,9 @@ int main(int argc, const char* argv[]){
 	pj[3].position = sf::Vector2<float>(r.getPosition().x, r.getPosition().y + fr.height-2);
 	pj[2].position = sf::Vector2<float>(r.getPosition().x + fr.width-2, r.getPosition().y + fr.height-2);
 
+/*    effect.setPosition(r.getPosition());
+    effect.setTimeBetweenAnimations(0.1);*/
+    
 	for(int i = 0; i < 4; ++i) pj[i].color = sf::Color::Black;
 	
 		if(r.getPosition().y >= 0 && r.getPosition().x+r.getSize().x < screenSize.x-1 && r.getPosition().x > 1 && r.getPosition().y+r.getSize().y < screenSize.y) {
@@ -337,6 +347,7 @@ int main(int argc, const char* argv[]){
             window.draw(textBg, sf::BlendAlpha);
             window.draw(text, sf::BlendAlpha);
         }
+        //window.draw(effect);
         window.display();
     }
   }
