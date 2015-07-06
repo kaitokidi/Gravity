@@ -24,6 +24,7 @@ int Effect::loadAnimation(std::string name, int qtty, std::string ext) {
     return errorPos;//return -1;
 }
 
+
 bool Effect::loadAnimation(std::vector<sf::Texture>& vector) { 
     animation.clear();
     animation = vector;
