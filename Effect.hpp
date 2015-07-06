@@ -87,6 +87,12 @@ public:
         //It will load the animation frame on the animation
         //the new frame will go at the end of the actual animation
     bool loadFrame(std::string name);
+
+    //FROM SPRITESHEET LOADERS STILL TO BE COMMENTED
+    bool loadHorizontalSpriteSheet(float qtty, std::string spriteSheet);
+    bool loadVerticalSpriteSheet(float qtty, std::string spriteSheet);
+    bool loadSpriteSheet(float height, float width, float qttyVert, float qttyHoriz, std::string spriteSheet);
+
     
     //UPDATE
     void updateAnimation(float deltatime);

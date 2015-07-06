@@ -30,6 +30,59 @@ bool Effect::loadAnimation(std::vector<sf::Texture>& vector) {
     return true;
 }
 
+bool Effect::loadHorizontalSpriteSheet(float qtty, std::string spriteSheet){
+    sf::Image spriteSheetImage;
+    if(! spriteSheetImage.loadFromFile(spriteSheet)) return false;
+    else {
+        float height = spriteSheetImage.getSize().y;
+        float width  = spriteSheetImage.getSize().x/qtty;
+        sf::Texture auxText;
+        for(int i = 0; i < qtty; ++i){
+            if(i*width > spriteSheetImage.getSize().x) return false;
+            auxText.loadFromImage(spriteSheetImage, sf::IntRect(i*width,0,width, height));
+            animation.push_back(auxText);
+        }
+    }
+    return true;
+}
+
+bool Effect::loadVerticalSpriteSheet(float qtty, std::string spriteSheet){
+    sf::Image spriteSheetImage;
+    if(! spriteSheetImage.loadFromFile(spriteSheet)) return false;
+    else {
+        float width = spriteSheetImage.getSize().x;
+        float height = spriteSheetImage.getSize().y/qtty;
+        sf::Texture auxText;
+        for(int i = 0; i < qtty; ++i){
+            if(i*height > spriteSheetImage.getSize().y) return false;
+            auxText.loadFromImage(spriteSheetImage, sf::IntRect(0,i*height,width, height));
+            animation.push_back(auxText);
+        }
+    }
+    return true;
+}
+
+bool Effect::loadSpriteSheet(float height, float width, float qttyVert, float qttyHoriz, std::string spriteSheet){
+    sf::Image spriteSheetImage;
+    if(! spriteSheetImage.loadFromFile(spriteSheet)) return false;
+    else {
+        float width = spriteSheetImage.getSize().x/qttyHoriz;
+        float height = spriteSheetImage.getSize().y/qttyVert;
+        sf::Texture auxText;
+        for(int k = 0; k < qttyVert; ++k){
+            if(k*height > spriteSheetImage.getSize().y) return false;
+            for(int i = 0; i < qttyHoriz; ++i){
+                if(i*width > spriteSheetImage.getSize().x) return false;
+                auxText.loadFromImage(spriteSheetImage, sf::IntRect(k*height,i*height,width, height));
+                animation.push_back(auxText);
+            }
+        }
+    }
+    return true;
+}
+
+
+
 bool Effect::loadFrame(std::string name, int position) { 
     if(position >= animation.size()) return false;
     return animation[position].loadFromFile(name);
