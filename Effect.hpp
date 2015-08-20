@@ -13,10 +13,17 @@ class Effect : public sf::Sprite {
     
     -LoadAnimation(~~~~); To load the desired animation, in order to do it, 
     you can use the following functions:
+        
+        Loading individual images
         - bool loadFrame(std::string name);
         - bool loadFrame(std::string name, int position);
+        Loading multiple images
         - bool loadAnimation(std::vector<sf::Texture>& vector);
         - int loadAnimation(std::string name, int qtty,std::string ext = "png");
+        Loading spritesheets
+        - bool loadVerticalSpriteSheet(std::string name, float qtty);
+        - bool loadHorizontalSpriteSheet(std::string name, float qtty);
+        - bool loadSpriteSheet(std::string name, float rows, float columns, int lastRowQtty =-1);
     
     -   SET AND GET
         - actualAnimation: set/get the position on the vector that must be used
