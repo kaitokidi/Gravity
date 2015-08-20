@@ -57,16 +57,16 @@ private:
     std::vector<sf::Texture> animation; //Vector which have the textures
     
 public:
-    //Creadora
+//Creadora
     Effect();
     
-    //Destructora
+//Destructora
     ~Effect();
     
-    //ANIMATION LOADERS 
-        //Caution: name will be the name of the file if it is
-        //in the same directory, otherwhise it will have to be
-        //the path where it is.
+//ANIMATION LOADERS 
+    //Caution: name will be the name of the file if it is
+    //in the same directory, otherwhise it will have to be
+    //the path where it is plus the name.
     
     //Load the animation using the name and the quantty
         //It will load animations with the names 
@@ -88,17 +88,35 @@ public:
         //the new frame will go at the end of the actual animation
     bool loadFrame(std::string name);
 
-    //FROM SPRITESHEET LOADERS STILL TO BE COMMENTED
-    bool loadHorizontalSpriteSheet(float qtty, std::string spriteSheet);
-    bool loadVerticalSpriteSheet(float qtty, std::string spriteSheet);
-    bool loadSpriteSheet(float height, float width, float qttyVert, float qttyHoriz, std::string spriteSheet);
+    //FROM SPRITESHEET LOADERS
+    
+    //Load the animation using a spritesheet.
+        //You will have to pass the name of the spritesheet, 
+        //the quantity of rows that it have
+        //the quantity of columns that each row have
+        //and OPTIONALY how many images are in the last row.
+            //with this option, it will be possible to load non
+            //perfectly squared spritesheets, if you don't set this
+            //parameter it will be lastRowQtty = columns;
+        //The order will be from left to right and top to bottom.
+    bool loadSpriteSheet(std::string name, float rows, float columns, int lastRowQtty =-1);
+    
+    //Load the animation using a VerticalSpriteSheet.
+        //You will need the name and the quantity of images it will have;
+    bool loadVerticalSpriteSheet(std::string name, float qtty);
+    
+    //Load the animation using a HoritzontalSpriteSheet.
+        //You will need the name and the quantity of images it will have;
+    bool loadHorizontalSpriteSheet(std::string name, float qtty);
 
     
-    //UPDATE
+//UPDATE
     void updateAnimation(float deltatime);
     
-    //DRAW
+//DRAW
     void draw(sf::RenderWindow& window);
+
+//OTHER FUNCTIONS
     
     //Increments the image on the animation
     int inc_actualAnim();

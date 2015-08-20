@@ -11,7 +11,6 @@ Effect::Effect() {
 Effect::~Effect() { }
 
 int Effect::loadAnimation(std::string name, int qtty, std::string ext) { 
-    //std::cout << "loadAnimation" << std::endl;
     animation.clear();
     int errorPos = -1;
     for(int i = 0; i < qtty; ++i){
@@ -20,7 +19,6 @@ int Effect::loadAnimation(std::string name, int qtty, std::string ext) {
         std::string path = s.str();
         if(!loadFrame(path+"."+ext)) return errorPos = i;
     }
-    //std::cout << "done" << std::endl;
     return errorPos;//return -1;
 }
 
@@ -31,9 +29,9 @@ bool Effect::loadAnimation(std::vector<sf::Texture>& vector) {
     return true;
 }
 
-bool Effect::loadHorizontalSpriteSheet(float qtty, std::string spriteSheet){
+bool Effect::loadHorizontalSpriteSheet(std::string name, float qtty){
     sf::Image spriteSheetImage;
-    if(! spriteSheetImage.loadFromFile(spriteSheet)) return false;
+    if(! spriteSheetImage.loadFromFile(name)) return false;
     else {
         float height = spriteSheetImage.getSize().y;
         float width  = spriteSheetImage.getSize().x/qtty;
@@ -47,9 +45,9 @@ bool Effect::loadHorizontalSpriteSheet(float qtty, std::string spriteSheet){
     return true;
 }
 
-bool Effect::loadVerticalSpriteSheet(float qtty, std::string spriteSheet){
+bool Effect::loadVerticalSpriteSheet(std::string name,float qtty){
     sf::Image spriteSheetImage;
-    if(! spriteSheetImage.loadFromFile(spriteSheet)) return false;
+    if(! spriteSheetImage.loadFromFile(name)) return false;
     else {
         float width = spriteSheetImage.getSize().x;
         float height = spriteSheetImage.getSize().y/qtty;
@@ -63,16 +61,21 @@ bool Effect::loadVerticalSpriteSheet(float qtty, std::string spriteSheet){
     return true;
 }
 
-bool Effect::loadSpriteSheet(float height, float width, float qttyVert, float qttyHoriz, std::string spriteSheet){
+bool Effect::loadSpriteSheet(std::string name, float rows, float columns, float lastRowQtty){
+    int lastRow = lastRowQtty;
+    if(lastRowQtty < 0) lastRowQtty = columns;
+    
     sf::Image spriteSheetImage;
-    if(! spriteSheetImage.loadFromFile(spriteSheet)) return false;
+    if(! spriteSheetImage.loadFromFile(name)) return false;
     else {
-        float width = spriteSheetImage.getSize().x/qttyHoriz;
-        float height = spriteSheetImage.getSize().y/qttyVert;
+        float width = spriteSheetImage.getSize().x/columns;
+        float height = spriteSheetImage.getSize().y/rows;
         sf::Texture auxText;
-        for(int k = 0; k < qttyVert; ++k){
+        for(int k = 0; k < rows; ++k){
             if(k*height > spriteSheetImage.getSize().y) return false;
-            for(int i = 0; i < qttyHoriz; ++i){
+            int qttyColumns = columns;
+            if(k == rows -1) qttyColumns = lastRowQtty;
+            for(int i = 0; i < qttyColumns; ++i){
                 if(i*width > spriteSheetImage.getSize().x) return false;
                 auxText.loadFromImage(spriteSheetImage, sf::IntRect(k*height,i*height,width, height));
                 animation.push_back(auxText);
