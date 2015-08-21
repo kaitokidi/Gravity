@@ -61,9 +61,9 @@ bool Effect::loadVerticalSpriteSheet(std::string name,float qtty){
     return true;
 }
 
-bool Effect::loadSpriteSheet(std::string name, float rows, float columns, float lastRowQtty){
+bool Effect::loadSpriteSheet(std::string name, float rows, float columns, int lastRowQtty){
     int lastRow = lastRowQtty;
-    if(lastRowQtty < 0) lastRowQtty = columns;
+    if(lastRowQtty < 0) lastRow = columns;
     
     sf::Image spriteSheetImage;
     if(! spriteSheetImage.loadFromFile(name)) return false;
@@ -71,20 +71,19 @@ bool Effect::loadSpriteSheet(std::string name, float rows, float columns, float 
         float width = spriteSheetImage.getSize().x/columns;
         float height = spriteSheetImage.getSize().y/rows;
         sf::Texture auxText;
+        int qttyColumns = columns;
         for(int k = 0; k < rows; ++k){
             if(k*height > spriteSheetImage.getSize().y) return false;
-            int qttyColumns = columns;
-            if(k == rows -1) qttyColumns = lastRowQtty;
+            if(k == rows -1) qttyColumns = lastRow;
             for(int i = 0; i < qttyColumns; ++i){
                 if(i*width > spriteSheetImage.getSize().x) return false;
-                auxText.loadFromImage(spriteSheetImage, sf::IntRect(k*height,i*height,width, height));
+                auxText.loadFromImage(spriteSheetImage, sf::IntRect(i*width,k*height,width, height));
                 animation.push_back(auxText);
             }
         }
     }
     return true;
 }
-
 
 
 bool Effect::loadFrame(std::string name, int position) { 
@@ -96,6 +95,17 @@ bool Effect::loadFrame(std::string name) {
     sf::Texture text;
     if(! text.loadFromFile(name)) return false;
     else animation.push_back(text);
+    return true;
+}
+
+bool Effect::loadFrame(sf::Texture & text, int position) { 
+    if(position >= animation.size()) return false;
+    animation[position] = sf::Texture(text);
+    return true;
+}
+
+bool Effect::loadFrame(sf::Texture & text) { 
+    animation.push_back(text);
     return true;
 }
 

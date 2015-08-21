@@ -95,6 +95,11 @@ public:
         //the new frame will go at the end of the actual animation
     bool loadFrame(std::string name);
 
+    bool loadFrame(sf::Texture & text); 
+    bool loadFrame(sf::Texture & text, int position);
+
+
+    
     //FROM SPRITESHEET LOADERS
     
     //Load the animation using a spritesheet.
@@ -150,7 +155,7 @@ public:
     //Set timeBetweenAnimations
     void setTimeBetweenAnimations(float time);
     
-    
+    //Remember that it have all the functions from a Sprite
 };
 
 #endif // EFFECT_H
